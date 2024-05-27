@@ -224,7 +224,7 @@ def bind(
         f"~python-{get_python_version(hfs_path)}",
     ]
 
-    with make_package("houdinier", path, make_root=make_root) as pkg:
+    with make_package("houdini", path, make_root=make_root) as pkg:
         pkg.version = version
         pkg.tools = get_tools(hfs_path)
         pkg.commands = commands
