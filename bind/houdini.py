@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 # Standard Library
+import json
 import os
 import pathlib
 import re
@@ -44,27 +45,22 @@ def get_houdini_version(hfs_path: pathlib.Path, only_major_minor: bool) -> str:
 
 
 def get_python_version(hfs_path: pathlib.Path) -> str:
-    """Determine Houdini's Python {major}.{minor} version from $HFS/python/bin/python.
+    """Determine Houdini's Python {major}.{minor} version from $HFS/toolkit/third_party_libraries.json
 
     Args:
         hfs_path: The $HFS path.
 
     Returns:
         The found python version.
-
-    Raises:
-        RuntimeError: If Houdini's Python version cannot be determined.
     """
-    python_bin = hfs_path / "python" / "bin" / "python"
+    libs_file = hfs_path / "toolkit" / "third_party_libraries.json"
 
-    python_bin = python_bin.resolve()
+    with libs_file.open() as handle:
+        libraries = json.load(handle)
 
-    result = re.match("python(\\d\\.\\d+)$", python_bin.name)
+    python_version = libraries["python"]["version"]
 
-    if result is None:
-        raise RuntimeError(f"Could not determine python version for {python_bin}")
-
-    return result.group(1)
+    return ".".join(python_version.split(".")[:2])
 
 
 def get_tools(root: pathlib.Path) -> list[str]:
